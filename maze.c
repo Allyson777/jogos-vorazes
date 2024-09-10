@@ -127,7 +127,7 @@ void imprimirPilha(Pilha *pilha)
     for (int i = pilha->topo; i >= 0; i--)
     {
         printf("(%d,%d) ", pilha->pilha[i].x + 1, pilha->pilha[i].y + 1);
-        if (i > 0)
+        if (i > 0) // não printa a seta na ultima posição
         {
             printf(" -> ");
         }
