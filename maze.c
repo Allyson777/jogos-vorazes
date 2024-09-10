@@ -123,10 +123,14 @@ Posicao desempilhar(Pilha *pilha)
 
 void imprimirPilha(Pilha *pilha)
 {
-    printf("Posição inicial: (Linha: %d, Coluna: %d)\n", pilha->pilha[0].x + 1, pilha->pilha[0].y + 1);
+    printf("Posicao inicial: (Linha: %d, Coluna: %d)\n", pilha->pilha[0].x + 1, pilha->pilha[0].y + 1);
     for (int i = pilha->topo; i >= 0; i--)
     {
-        printf("(%d,%d) -> ", pilha->pilha[i].x + 1, pilha->pilha[i].y + 1);
+        printf("(%d,%d) ", pilha->pilha[i].x + 1, pilha->pilha[i].y + 1);
+        if (i > 0)
+        {
+            printf(" -> ");
+        }
     }
     printf("\n");
     for (int i = pilha->topo; i >= 0; i--)
