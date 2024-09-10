@@ -4,16 +4,22 @@ int main()
 {
     Labirinto labirinto;
     Pilha caminho;
-    inicializarPilha(&caminho, 1000); // Ajuste o tamanho máximo conforme necessário
-
-    carregarLabirinto(&labirinto, 5, 5); // Ajuste as dimensões conforme necessário
+    
+    int n, m;
+    inicializarPilha(&caminho, 1000); 
+    printf("Digite a largura do labirinto: ");
+    scanf("%d", &m);
+    printf("Digite a altura do labirinto: ");
+    scanf("%d", &n);
+    carregarLabirinto(&labirinto, n, m);
+    printf("\n");
     imprimeLabirinto(&labirinto);
 
     printf("Buscando caminho...\n");
     if (encontrarCaminho(&labirinto, labirinto.posicaoInicial, &caminho))
     {
         printf("Caminho encontrado:\n");
-        imprimirPilha(&caminho);
+        imprimirResultado(&caminho);
     }
     else
     {

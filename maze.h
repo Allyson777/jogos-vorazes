@@ -89,14 +89,6 @@ void imprimeLabirinto(Labirinto *labirinto);
 */
 void inicializarPilha(Pilha *pilha, int tamanho_maximo);
 
-/*
-    Nome da função: pilhaVazia
-    Parâmetros:
-        pilha: (Ponteiro para uma estrutura Pilha)
-    Objetivo: Verificar se a pilha está vazia.
-    Retorno: Retorna 1 se a pilha estiver vazia, caso contrário retorna 0.
-*/
-int pilhaVazia(Pilha *pilha);
 
 /*
     Nome da função: empilhar
@@ -118,12 +110,12 @@ void empilhar(Pilha *pilha, Posicao pos, char movimento);
 Posicao desempilhar(Pilha *pilha);
 
 /*
-    Nome da função: imprimirPilha
+    Nome da função: imprimirResultado
     Parâmetros:
         pilha: (Ponteiro para uma estrutura Pilha)
     Objetivo: Imprimir as posições e a sequência de movimentos armazenados na pilha.
 */
-void imprimirPilha(Pilha *pilha);
+void imprimirResultado(Pilha *pilha);
 
 /*
     Nome da função: desalocarPilha

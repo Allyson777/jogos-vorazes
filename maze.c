@@ -49,21 +49,39 @@ void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
     labirinto->altura = linhas;
     labirinto->largura = colunas;
 
-    carregaLabirintoAleatorio(labirinto);
+   int i, j;
+    int contadorA = 0;
 
-    int i, j;
+    // le cada caractere
     for (i = 0; i < labirinto->altura; i++)
     {
         for (j = 0; j < labirinto->largura; j++)
         {
-            if (labirinto->mapa[i][j] != '.' && labirinto->mapa[i][j] != '#' && labirinto->mapa[i][j] != 'A' && labirinto->mapa[i][j] != 'M')
+            scanf(" %c", &labirinto->mapa[i][j]);
+            if (labirinto->mapa[i][j] == 'A')
             {
-                printf("Erro: Caractere inválido '%c' encontrado no labirinto.\n", labirinto->mapa[i][j]);
-                return;
+                labirinto->posicaoInicial.x = i;
+                labirinto->posicaoInicial.y = j;
+                contadorA++;
+
+                if (labirinto->mapa[i][j] != 'A' && labirinto->mapa[i][j] != '.' && labirinto->mapa[i][j] != '#' && labirinto->mapa[i][j] != 'M')
+                {
+                    printf("Erro: Caractere inválido '%c' encontrado no labirinto.\n", labirinto->mapa[i][j]);
+                    return;
+                }
             }
         }
+        }
+        if (contadorA == 0)
+        {
+            printf("Erro: Nenhum ponto inicial 'A' encontrado no labirinto.\n");
+        }
+        else if (contadorA > 1)
+        {
+            printf("Erro: Mais de um ponto inicial 'A' encontrado no labirinto.\n");
+        }
     }
-}
+
 
 void imprimeLabirinto(Labirinto *labirinto)
 {
@@ -93,10 +111,6 @@ void inicializarPilha(Pilha *pilha, int tamanho_maximo)
     pilha->tamanho_maximo = tamanho_maximo;
 }
 
-int pilhaVazia(Pilha *pilha)
-{
-    return pilha->topo == -1;
-}
 
 void empilhar(Pilha *pilha, Posicao pos, char movimento)
 {
@@ -113,17 +127,17 @@ void empilhar(Pilha *pilha, Posicao pos, char movimento)
 
 Posicao desempilhar(Pilha *pilha)
 {
-    if (pilhaVazia(pilha))
+    if (pilha->topo == -1)
     {
-        fprintf(stderr, "Pilha vazia. Não é possível desempilhar.\n");
+        printf("Pilha vazia. Não é possível desempilhar.\n");
         exit(1);
     }
     return pilha->pilha[(pilha->topo)--];
 }
 
-void imprimirPilha(Pilha *pilha)
+void imprimirResultado(Pilha *pilha)
 {
-    printf("Posicao inicial: (Linha: %d, Coluna: %d)\n", pilha->pilha[0].x + 1, pilha->pilha[0].y + 1);
+    // printf("Posicao inicial: (Linha: %d, Coluna: %d)\n", pilha->pilha[0].x + 1, pilha->pilha[0].y + 1);
     for (int i = pilha->topo; i >= 0; i--)
     {
         printf("(%d,%d) ", pilha->pilha[i].x + 1, pilha->pilha[i].y + 1);
@@ -138,7 +152,7 @@ void imprimirPilha(Pilha *pilha)
         printf("%c", pilha->movimentos[i]);
     }
     printf("\nSaiu\n");
-    printf("Tamanho da pilha: %d\n", pilha->topo);
+    printf("Quantidade de movimentos: %d\n", pilha->topo);
 }
 
 void desalocarPilha(Pilha *pilha)
@@ -154,6 +168,7 @@ char movimentos[4] = {'U', 'D', 'L', 'R'}; // Cima, Baixo, Esquerda, Direita
 
 int encontrarCaminho(Labirinto *labirinto, Posicao posicaoAtual, Pilha *caminho)
 {
+    imprimeLabirinto(labirinto);
     // Se a posição atual estiver na borda do labirinto, encontramos a saída
     if (posicaoAtual.x == 0 || posicaoAtual.x == labirinto->altura - 1 ||
         posicaoAtual.y == 0 || posicaoAtual.y == labirinto->largura - 1)
@@ -188,3 +203,9 @@ int encontrarCaminho(Labirinto *labirinto, Posicao posicaoAtual, Pilha *caminho)
     labirinto->mapa[posicaoAtual.x][posicaoAtual.y] = '.';
     return 0;
 }
+
+//fazer bestantes andar simultaneo com o tributo pq só conseguimos andar com um bestante
+
+//fazer bestante capturar tributo 
+
+//
