@@ -1,98 +1,147 @@
 #ifndef __MAZE_H__
 #define __MAZE_H__
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define TAMANHO_MAX 1000
 
 /*
-    Nome da Estrutura: Posicao
-    Objetivo: Representa uma posição no labirinto
-    Campos:
-        x: um inteiro que a coordenada x (linha) da posição
-        y: um inteiro que a coordenada y (coluna) da posição
+    Estrutura: Posicao
+    Atributos:
+        x: (Inteiro que representa a coordenada x da posição no labirinto)
+        y: (Inteiro que representa a coordenada y da posição no labirinto)
+    Objetivo: Representar uma posição no labirinto, com coordenadas x e y.
 */
 typedef struct
 {
-    int x;
-    int y;
+    int x, y;
 } Posicao;
 
 /*
-    Nome da Estrutura: Labirinto
-    Objetivo: Representa o labirinto em 2 dimensões
-    Campos:
-        mapa: uma matriz bidimensional de caracteres que representa o mapa
-            do labirinto. Cada celula pode conter:
-            "." para chão
-            "#" para parede
-            "A" para posição inicial do tributo
-            "M" para um bestante (monstro)
-        altura: um inteiro que armazena a altura do labirinto
-        largura: um inteiro que armazena a largura do labirinto
-    obs: a constante TAMANHO_MAX (definida como 1000 no arquivo) determina o tamanho maximo do labirinto
+    Estrutura: Labirinto
+    Atributos:
+        mapa: (Matriz de caracteres representando o labirinto)
+        altura: (Inteiro que representa a altura do labirinto)
+        largura: (Inteiro que representa a largura do labirinto)
+        posicaoInicial: (Estrutura Posicao que guarda a posição inicial do tributo no labirinto)
+    Objetivo: Armazenar as informações do labirinto.
 */
-typedef struct labirinto
+typedef struct
 {
     char mapa[TAMANHO_MAX][TAMANHO_MAX];
-    int altura;
-    int largura;
+    int altura, largura;
     Posicao posicaoInicial;
-    char visitado[TAMANHO_MAX][TAMANHO_MAX];
 } Labirinto;
 
-typedef struct pilha
+/*
+    Estrutura: Pilha
+    Atributos:
+        pilha: (Ponteiro para uma lista dinâmica de posições, representando o caminho percorrido)
+        topo: (Índice do topo da pilha, indicando a última posição inserida)
+        tamanho_maximo: (Tamanho máximo da pilha)
+        movimentos: (Ponteiro para uma string que armazena a sequência de movimentos realizados)
+    Objetivo: Armazenar o caminho percorrido no labirinto, com as posições e os movimentos.
+*/
+typedef struct
 {
-    Posicao pilha[TAMANHO_MAX * TAMANHO_MAX];
+    Posicao *pilha;
     int topo;
-    int tamanho;
+    int tamanho_maximo;
+    char *movimentos;
 } Pilha;
 
 /*
     Nome da função: carregarLabirinto
-    Parametro:
-        labirinto:(Ponteiro para uma estrutura labirinto da entrada)
-        linhas:(inteiro com o tamanho da altura do labirinto)
-        colunas:(inteiro com o tamanho da largura do labirinto)
+    Parâmetros:
+        labirinto: (Ponteiro para uma estrutura Labirinto)
+        linhas: (Número de linhas do labirinto)
+        colunas: (Número de colunas do labirinto)
+    Objetivo: Inicializa o labirinto com as entradas e preenche o mapa com caracteres aleatórios.
 
-    Objetivo: Armazenar a altura e Largura do labirinto nos campos da estrutura
-              em seguida, ler o mapa do labirinto linha por linha e coloca-lo no campo mapa
 */
 void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas);
 
-// FAZER DOCUMENTAÇÃO DESSAS FUNÇÕES SE NECESSARIO
+/*
+    Nome da função: carregaLabirintoAleatorio
+    Parâmetros:
+        labirinto: (Ponteiro para uma estrutura Labirinto)
+    Objetivo: Preencher o labirinto aleatoriamente para testes.
+*/
 void carregaLabirintoAleatorio(Labirinto *labirinto);
+
+/*
+    Nome da função: imprimeLabirinto
+    Parâmetros:
+        labirinto: (Ponteiro para uma estrutura Labirinto)
+    Objetivo: Imprimir o labirinto.
+*/
 void imprimeLabirinto(Labirinto *labirinto);
 
-// int existeSaida(Labirinto *labirinto);
-// int buscaEmProfundidade(Labirinto *labirinto, int x, int y);
-// int dentroDoLabirinto(Labirinto *labirinto, int x, int y);
+/*
+    Nome da função: inicializarPilha
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+        tamanho_maximo: (Tamanho máximo da pilha)
+    Objetivo: Inicializar a estrutura pilha, alocando memória para armazenar as posições e movimentos.
+*/
+void inicializarPilha(Pilha *pilha, int tamanho_maximo);
 
 /*
-    Nome da função: existeCaminho
-    Parametro:
-        labirinto:(Ponteiro para uma estrutura labirinto da entrada)
-    Retorno: 1 se for possivel escapar(tem caminho), 0 se não tem caminho para escapar
-    Objetivo: A partir de um algoritmo de busca, verificar se tem o caminho para o tributo
-              sair do labirinto. Considera movimentos simultaneos do tributo e dos bestantes
+    Nome da função: pilhaVazia
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+    Objetivo: Verificar se a pilha está vazia.
+    Retorno: Retorna 1 se a pilha estiver vazia, caso contrário retorna 0.
 */
-// int existeCaminho(Labirinto *labirinto, char *caminho, int *tamanhoCaminho);
+int pilhaVazia(Pilha *pilha);
 
 /*
-    Nome da função: imprimirCaminho
-    Parametro:
-        labirinto:(Ponteiro para uma estrutura labirinto da entrada)
-    Objetivo: Essa função deve encontrar o caminho de fuga e imprimir esse caminho válido.
+    Nome da função: empilhar
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+        pos: (Estrutura Posicao a ser empilhada)
+        movimento: (Caractere representando o movimento associado)
+    Objetivo: Adicionar uma posição e o movimento correspondente à pilha.
 */
-// void imprimirCaminho(Labirinto *labirinto);
+void empilhar(Pilha *pilha, Posicao pos, char movimento);
 
-// Estrutura para a arvore (busca)
-// typedef struct no
-// {
-//     int chave;
-//     struct no *esq, *dir, *cima, *baixo;
-// } Tree;
+/*
+    Nome da função: desempilhar
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+    Objetivo: Remover e retornar a posição no topo da pilha.
+    Retorno: A posição removida do topo da pilha.
+*/
+Posicao desempilhar(Pilha *pilha);
+
+/*
+    Nome da função: imprimirPilha
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+    Objetivo: Imprimir as posições e a sequência de movimentos armazenados na pilha.
+*/
+void imprimirPilha(Pilha *pilha);
+
+/*
+    Nome da função: desalocarPilha
+    Parâmetros:
+        pilha: (Ponteiro para uma estrutura Pilha)
+    Objetivo: Liberar a memória alocada para a pilha e os movimentos, evitando vazamentos de memória.
+*/
+void desalocarPilha(Pilha *pilha);
+
+/*
+    Nome da função: encontrarCaminho
+    Parâmetros:
+        labirinto: (Ponteiro para uma estrutura Labirinto)
+        posicaoAtual: (Estrutura Posicao indicando a posição atual no labirinto)
+        caminho: (Ponteiro para uma estrutura Pilha onde o caminho encontrado será armazenado)
+    Objetivo: Encontrar um caminho do início do labirinto até a borda usando busca em profundidade.
+    Retorno: Retorna 1 se um caminho for encontrado, caso contrário retorna 0.
+*/
+int encontrarCaminho(Labirinto *labirinto, Posicao posicaoAtual, Pilha *caminho);
 
 #endif
