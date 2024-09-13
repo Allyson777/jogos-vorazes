@@ -140,7 +140,7 @@ void desalocarPilha(Pilha *pilha)
 }
 
 // Inicializa uma fila alocando memória para armazenar as posições.
-void inicializaFila(Fila *q, int tamanhoMaximo)
+void inicializarFila(Fila *q, int tamanhoMaximo)
 {
     q->itens = (Posicao *)malloc(tamanhoMaximo * sizeof(Posicao));
     q->primeiro = -1;
@@ -204,16 +204,16 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
     inicializarFila(&qA, labirinto->altura * labirinto->largura);
     inicializarFila(&qM, labirinto->altura * labirinto->largura);
 
-    bool visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {false};
-    bool visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {false};
+    int visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {0}; // Usando 0 para falso
+    int visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {0}; // Usando 0 para falso
 
     enfileirar(&qA, labirinto->posicaoInicial);
-    visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = true;
+    visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = 1;
 
     for (int i = 0; i < labirinto->numMonstros; i++)
     {
         enfileirar(&qM, labirinto->monstros[i].posicao);
-        visitadoM[labirinto->monstros[i].posicao.x][labirinto->monstros[i].posicao.y] = true;
+        visitadoM[labirinto->monstros[i].posicao.x][labirinto->monstros[i].posicao.y] = 1;
     }
 
     int dx[] = {-1, 1, 0, 0};
@@ -232,7 +232,7 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 currentA.y == 0 || currentA.y == labirinto->largura - 1)
             {
 
-                return 1; // 'A' escapou
+                return 1; // Labirinto resolvido com sucesso
             }
 
             // Explora vizinhos de 'A'
@@ -246,7 +246,7 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 {
                     Posicao newA = {newX, newY};
                     enfileirar(&qA, newA);
-                    visitadoA[newX][newY] = true;
+                    visitadoA[newX][newY] = 1;
                 }
             }
         }
@@ -263,16 +263,16 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 int newY = currentM.y + dy[i];
 
                 if (newX >= 0 && newX < labirinto->altura && newY >= 0 && newY < labirinto->largura &&
-                    !visitadoM[newX][newY] && labirinto->mapa[newX][newY] != '#')
+                    visitadoM[newX][newY] == 0 && labirinto->mapa[newX][newY] != '#')
                 {
                     Posicao newM = {newX, newY};
                     enfileirar(&qM, newM);
-                    visitadoM[newX][newY] = true;
+                    visitadoM[newX][newY] = 1;
 
                     // Verifica se o monstro pegou 'A'
                     if (visitadoA[newX][newY])
                     {
-                        return 0; // Monstro pegou 'A'
+                        return 0; // Labirinto não resolvido
                     }
                 }
             }
