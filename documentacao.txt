@@ -1,0 +1,57 @@
+main(){
+    /**
+ * Função principal que executa o programa de resolução de labirinto.
+ *
+ * O programa começa recebendo as dimensões do labirinto e os dados do mapa. Em seguida,
+ * utiliza as funções definidas no arquivo "maze.h" para carregar o labirinto, imprimir
+ * sua configuração inicial e resolver o labirinto, buscando o menor caminho.
+ * 
+ * A função `carregarLabirinto` é chamada para preencher a estrutura do labirinto com 
+ * base nas dimensões e caracteres fornecidos. Logo após, o labirinto é impresso 
+ * utilizando a função `imprimeLabirinto`. Por fim, a função `resolverLabirinto` é 
+ * chamada para buscar o menor caminho entre o ponto inicial e a saída, levando em 
+ * consideração a presença de monstros no labirinto.
+ *
+ * Retorna 0 para indicar o sucesso da execução.
+ */
+}
+
+maze.c(){
+
+    Estruturas Utilizadas:
+    1 - Posicao:
+
+    Representa uma posição no labirinto, com coordenadas x (linha) e y (coluna).
+
+    2 - Monstro:
+
+    Representa um monstro no labirinto, contendo uma variável posicao que é do tipo Posicao.
+    
+    3 - Labirinto:
+
+    Armazena o estado do labirinto:
+    mapa: a matriz que representa o layout do labirinto, com paredes, caminhos, o ponto inicial de 'A' e monstros.
+    altura e largura: dimensões do labirinto.
+    posicaoInicial: a posição inicial de 'A'.
+    monstros: lista de monstros no labirinto.
+    numMonstros: número de monstros presentes no labirinto.
+    
+    4 - Pilha:
+
+    Implementa uma pilha para armazenar posições e os movimentos de 'A' no labirinto.
+    Contém:
+    pilha: array de posições.
+    topo: o índice do elemento no topo da pilha.
+    tamanho_maximo: o tamanho máximo que a pilha pode ter.
+    movimentos: array que armazena os movimentos feitos por 'A'.
+
+    5(Fila):
+
+    Implementa uma fila para armazenar posições durante a exploração do labirinto.
+    Contém:
+    items: array de posições.
+    front e rear: índices do início e do fim da fila.
+    size: tamanho máximo da fila.
+
+
+}

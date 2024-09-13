@@ -1,5 +1,8 @@
 #include "maze.h"
 
+// Carrega o layout do labirinto a partir da entrada.
+// Define as dimensões do labirinto (altura, largura) e verifica se o mapa contém um ponto inicial 'A' válido.
+// Conta e armazena a quantidade de monstros 'M' no labirinto.
 void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
 {
     if (linhas < 1 || linhas > TAMANHO_MAX || colunas < 1 || colunas > TAMANHO_MAX)
@@ -56,6 +59,7 @@ void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
     }
 }
 
+// Imprime o labirinto na tela, linha por linha, de acordo com a matriz mapa.
 void imprimeLabirinto(Labirinto *labirinto)
 {
     int i, j;
@@ -71,6 +75,7 @@ void imprimeLabirinto(Labirinto *labirinto)
     printf("\n");
 }
 
+// Inicializa uma pilha alocando memória para armazenar as posições e os movimentos de 'A'.
 void inicializarPilha(Pilha *pilha, int tamanho_maximo)
 {
     pilha->pilha = (Posicao *)malloc(tamanho_maximo * sizeof(Posicao));
@@ -84,11 +89,13 @@ void inicializarPilha(Pilha *pilha, int tamanho_maximo)
     pilha->tamanho_maximo = tamanho_maximo;
 }
 
+// Verifica se a pilha está vazia, retornando verdadeiro se topo for -1.
 int pilhaVazia(Pilha *pilha)
 {
     return pilha->topo == -1;
 }
 
+// Empilha uma nova posição e o movimento correspondente, se a pilha não estiver cheia.
 void empilhar(Pilha *pilha, Posicao pos, char movimento)
 {
     if (pilha->topo < pilha->tamanho_maximo - 1)
@@ -102,6 +109,8 @@ void empilhar(Pilha *pilha, Posicao pos, char movimento)
     }
 }
 
+// Remove a posição no topo da pilha e a retorna.
+// Se a pilha estiver vazia, a função exibe uma mensagem de erro.
 Posicao desempilhar(Pilha *pilha)
 {
     if (pilhaVazia(pilha))
@@ -112,6 +121,7 @@ Posicao desempilhar(Pilha *pilha)
     return pilha->pilha[(pilha->topo)--];
 }
 
+// Imprime todos os movimentos contidos na pilha, do topo até a base.
 void imprimirPilha(Pilha *pilha)
 {
     printf("\n");
@@ -129,39 +139,44 @@ void desalocarPilha(Pilha *pilha)
     free(pilha->movimentos);
 }
 
-// Funções para a fila
-void initializeQueue(Queue *q, int maxSize)
+// Inicializa uma fila alocando memória para armazenar as posições.
+void inicializaFila(Fila *q, int tamanhoMaximo)
 {
-    q->items = (Posicao *)malloc(maxSize * sizeof(Posicao));
-    q->front = -1;
-    q->rear = -1;
-    q->size = maxSize;
+    q->itens = (Posicao *)malloc(tamanhoMaximo * sizeof(Posicao));
+    q->primeiro = -1;
+    q->ultimo = -1;
+    q->tamanho = tamanhoMaximo;
 }
 
-int isQueueEmpty(Queue *q)
+// Verifica se a fila está vazia, retornando verdadeiro se front for -1.
+int filaVazia(Fila *q)
 {
-    return q->front == -1;
+    return q->primeiro == -1;
 }
 
-void enqueue(Queue *q, Posicao value)
+// Adiciona uma nova posição ao final da fila (rear), se a fila não estiver cheia.
+void enfileirar(Fila *q, Posicao valor)
 {
-    if (q->rear == q->size - 1)
+    if (q->ultimo == q->tamanho - 1)
         return;
-    if (q->front == -1)
-        q->front = 0;
-    q->rear++;
-    q->items[q->rear] = value;
+    if (q->primeiro == -1)
+        q->primeiro = 0;
+    q->ultimo++;
+    q->itens[q->ultimo] = valor;
 }
 
-Posicao dequeue(Queue *q)
+// Remove a posição no início da fila (front) e a retorna.
+// Se a fila estiver vazia, a função exibe uma mensagem de erro.
+Posicao desenfileirar(Fila *q)
 {
-    Posicao item = q->items[q->front];
-    q->front++;
-    if (q->front > q->rear)
-        q->front = q->rear = -1;
+    Posicao item = q->itens[q->primeiro];
+    q->primeiro++;
+    if (q->primeiro > q->ultimo)
+        q->primeiro = q->ultimo = -1;
     return item;
 }
 
+// Inicializa a lista de monstros no labirinto, identificando suas posições no mapa.
 void inicializarMonstros(Labirinto *labirinto)
 {
     labirinto->numMonstros = 0;
@@ -179,34 +194,38 @@ void inicializarMonstros(Labirinto *labirinto)
     }
 }
 
+// Resolve o labirinto com monstros, utilizando duas filas:
+// Uma fila (qA) para armazenar as posições de 'A'.
+// Outra fila (qM) para armazenar as posições dos monstros.
+
 int resolverLabirintoComMonstros(Labirinto *labirinto)
 {
-    Queue qA, qM;
-    initializeQueue(&qA, labirinto->altura * labirinto->largura);
-    initializeQueue(&qM, labirinto->altura * labirinto->largura);
+    Fila qA, qM;
+    inicializarFila(&qA, labirinto->altura * labirinto->largura);
+    inicializarFila(&qM, labirinto->altura * labirinto->largura);
 
     bool visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {false};
     bool visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {false};
 
-    enqueue(&qA, labirinto->posicaoInicial);
+    enfileirar(&qA, labirinto->posicaoInicial);
     visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = true;
 
     for (int i = 0; i < labirinto->numMonstros; i++)
     {
-        enqueue(&qM, labirinto->monstros[i].posicao);
+        enfileirar(&qM, labirinto->monstros[i].posicao);
         visitadoM[labirinto->monstros[i].posicao.x][labirinto->monstros[i].posicao.y] = true;
     }
 
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
-    while (!isQueueEmpty(&qA))
+    while (!filaVazia(&qA))
     {
         // Movimento de 'A'
-        int sizeA = qA.rear - qA.front + 1;
-        for (int a = 0; a < sizeA; a++)
+        int tamanhoA = qA.ultimo - qA.primeiro + 1;
+        for (int a = 0; a < tamanhoA; a++)
         {
-            Posicao currentA = dequeue(&qA);
+            Posicao currentA = desenfileirar(&qA);
 
             // Verifica se 'A' chegou à saída
             if (currentA.x == 0 || currentA.x == labirinto->altura - 1 ||
@@ -226,17 +245,17 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                     !visitadoA[newX][newY] && labirinto->mapa[newX][newY] != '#')
                 {
                     Posicao newA = {newX, newY};
-                    enqueue(&qA, newA);
+                    enfileirar(&qA, newA);
                     visitadoA[newX][newY] = true;
                 }
             }
         }
 
         // Movimento dos monstros
-        int sizeM = qM.rear - qM.front + 1;
-        for (int m = 0; m < sizeM; m++)
+        int tamanhoM = qM.ultimo - qM.primeiro + 1;
+        for (int m = 0; m < tamanhoM; m++)
         {
-            Posicao currentM = dequeue(&qM);
+            Posicao currentM = desenfileirar(&qM);
 
             for (int i = 0; i < 4; i++)
             {
@@ -247,7 +266,7 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                     !visitadoM[newX][newY] && labirinto->mapa[newX][newY] != '#')
                 {
                     Posicao newM = {newX, newY};
-                    enqueue(&qM, newM);
+                    enfileirar(&qM, newM);
                     visitadoM[newX][newY] = true;
 
                     // Verifica se o monstro pegou 'A'
@@ -263,6 +282,8 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
     return 0; // 'A' não conseguiu escapar
 }
 
+// Inicializa os monstros e chama a função resolverLabirintoComMonstros.
+// Imprime "YES" se 'A' conseguir escapar e "NO" se for pego por um monstro.
 void resolverLabirinto(Labirinto *labirinto)
 {
     inicializarMonstros(labirinto);
