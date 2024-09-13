@@ -157,6 +157,7 @@ int filaVazia(Fila *q)
 // Adiciona uma nova posição ao final da fila (rear), se a fila não estiver cheia.
 void enfileirar(Fila *q, Posicao valor)
 {
+
     if (q->ultimo == q->tamanho - 1)
         return;
     if (q->primeiro == -1)
@@ -287,7 +288,8 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
 void resolverLabirinto(Labirinto *labirinto)
 {
     inicializarMonstros(labirinto);
-    if (resolverLabirintoComMonstros(labirinto))
+    int resultado = resolverLabirintoComMonstros(labirinto);
+    if (resultado == 1)
     {
         printf("YES\n");
     }
