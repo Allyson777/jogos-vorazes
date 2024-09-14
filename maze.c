@@ -177,7 +177,7 @@ void inicializarMonstros(Labirinto *labirinto)
     }
 }
 
-int resolverLabirintoComMonstros(Labirinto *labirinto)
+int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA)
 {
     Fila qA, qM;
     inicializarFila(&qA, labirinto->altura * labirinto->largura);
@@ -198,14 +198,16 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
+    *movimentosA = 0; // Inicializa o contador de movimentos de A
+
     while (!filaVazia(&qA))
     {
-
         int tamanhoA = qA.ultimo - qA.primeiro + 1;
         for (int a = 0; a < tamanhoA; a++)
         {
             Posicao currentA = desenfileirar(&qA);
 
+            // Verifica se A chegou à borda (ou seja, encontrou a saída)
             if (currentA.x == 0 || currentA.x == labirinto->altura - 1 ||
                 currentA.y == 0 || currentA.y == labirinto->largura - 1)
             {
@@ -226,6 +228,8 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 }
             }
         }
+
+        (*movimentosA)++; // Incrementa o contador de movimentos de A
 
         int tamanhoM = qM.ultimo - qM.primeiro + 1;
         for (int m = 0; m < tamanhoM; m++)
@@ -259,10 +263,12 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
 void resolverLabirinto(Labirinto *labirinto)
 {
     inicializarMonstros(labirinto);
-    printf("Buscando o menor caminho...\n");
-    if (resolverLabirintoComMonstros(labirinto))
+
+    int movimentosA = 0; // Variável para armazenar os movimentos de A
+    if (resolverLabirintoComMonstros(labirinto, &movimentosA))
     {
         printf("YES\n");
+        printf("%d\n", movimentosA);
     }
     else
     {

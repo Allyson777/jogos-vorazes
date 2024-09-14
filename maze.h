@@ -92,8 +92,6 @@ typedef struct
         distancia: (Distância da posição inicial até esta posição)
     Objetivo: Representar um item da fila usado durante a busca em largura.
 */
-void desalocarFila(Fila *f);
-
 typedef struct
 {
     int x, y;
@@ -222,7 +220,7 @@ void inicializarMonstros(Labirinto *labirinto);
     Retorno: (Inteiro que indica o sucesso ou falha da solução)
     Objetivo: Resolver o labirinto levando em consideração a presença de monstros.
 */
-int resolverLabirintoComMonstros(Labirinto *labirinto);
+int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA);
 
 /*
     Nome da função: resolverLabirinto
