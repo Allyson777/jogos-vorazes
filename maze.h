@@ -217,6 +217,7 @@ void inicializarMonstros(Labirinto *labirinto);
     Nome da função: resolverLabirintoComMonstros
     Parâmetros:
         labirinto: (Ponteiro para uma estrutura Labirinto)
+        movimentosA: (inteiro armazenando a quantidade de movimentos que A fez até a saída (se houve))
     Retorno: (Inteiro que indica o sucesso ou falha da solução)
     Objetivo: Resolver o labirinto levando em consideração a presença de monstros.
 */

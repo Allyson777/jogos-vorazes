@@ -1,5 +1,4 @@
 #include "maze.h"
-
 void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
 {
     if (linhas < 1 || linhas > TAMANHO_MAX || colunas < 1 || colunas > TAMANHO_MAX)
@@ -119,7 +118,6 @@ void imprimirPilha(Pilha *pilha)
         printf("%c", pilha->movimentos[i]);
     }
     printf("\n");
-    printf("%d\n", pilha->topo);
 }
 
 void desalocarPilha(Pilha *pilha)
@@ -185,9 +183,11 @@ int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA)
 
     bool visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {false};
     bool visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {false};
+    char direcoes[TAMANHO_MAX][TAMANHO_MAX]; // Para rastrear as direções tomadas
 
     enfileirar(&qA, labirinto->posicaoInicial);
     visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = true;
+    direcoes[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = 'S'; // 'S' = Start
 
     for (int i = 0; i < labirinto->numMonstros; i++)
     {
@@ -197,6 +197,7 @@ int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA)
 
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
+    char movimentos[] = {'U', 'D', 'L', 'R'}; // U = up, D = down, L = left, R = right
 
     *movimentosA = 0; // Inicializa o contador de movimentos de A
 
@@ -211,6 +212,29 @@ int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA)
             if (currentA.x == 0 || currentA.x == labirinto->altura - 1 ||
                 currentA.y == 0 || currentA.y == labirinto->largura - 1)
             {
+                // Imprime o caminho percorrido até a saída
+                printf("Buscando o menor caminho...\n");
+                Posicao temp = currentA;
+                while (direcoes[temp.x][temp.y] != 'S')
+                {
+                    printf("%c", direcoes[temp.x][temp.y]);
+                    switch (direcoes[temp.x][temp.y])
+                    {
+                    case 'U':
+                        temp.x++;
+                        break;
+                    case 'D':
+                        temp.x--;
+                        break;
+                    case 'L':
+                        temp.y++;
+                        break;
+                    case 'R':
+                        temp.y--;
+                        break;
+                    }
+                }
+                printf("\n");
                 return 1; // A escapou
             }
 
@@ -225,12 +249,14 @@ int resolverLabirintoComMonstros(Labirinto *labirinto, int *movimentosA)
                     Posicao newA = {newX, newY};
                     enfileirar(&qA, newA);
                     visitadoA[newX][newY] = true;
+                    direcoes[newX][newY] = movimentos[i]; // Registra a direção do movimento
                 }
             }
         }
 
         (*movimentosA)++; // Incrementa o contador de movimentos de A
 
+        // Movimentos dos monstros
         int tamanhoM = qM.ultimo - qM.primeiro + 1;
         for (int m = 0; m < tamanhoM; m++)
         {
