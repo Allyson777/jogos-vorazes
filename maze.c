@@ -1,8 +1,5 @@
 #include "maze.h"
 
-// Carrega o layout do labirinto a partir da entrada.
-// Define as dimensões do labirinto (altura, largura) e verifica se o mapa contém um ponto inicial 'A' válido.
-// Conta e armazena a quantidade de monstros 'M' no labirinto.
 void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
 {
     if (linhas < 1 || linhas > TAMANHO_MAX || colunas < 1 || colunas > TAMANHO_MAX)
@@ -17,7 +14,6 @@ void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
     int i, j;
     int contadorA = 0;
 
-    // le cada caractere
     for (i = 0; i < labirinto->altura; i++)
     {
         for (j = 0; j < labirinto->largura; j++)
@@ -59,7 +55,6 @@ void carregarLabirinto(Labirinto *labirinto, int linhas, int colunas)
     }
 }
 
-// Imprime o labirinto na tela, linha por linha, de acordo com a matriz mapa.
 void imprimeLabirinto(Labirinto *labirinto)
 {
     int i, j;
@@ -75,7 +70,6 @@ void imprimeLabirinto(Labirinto *labirinto)
     printf("\n");
 }
 
-// Inicializa uma pilha alocando memória para armazenar as posições e os movimentos de 'A'.
 void inicializarPilha(Pilha *pilha, int tamanho_maximo)
 {
     pilha->pilha = (Posicao *)malloc(tamanho_maximo * sizeof(Posicao));
@@ -89,13 +83,11 @@ void inicializarPilha(Pilha *pilha, int tamanho_maximo)
     pilha->tamanho_maximo = tamanho_maximo;
 }
 
-// Verifica se a pilha está vazia, retornando verdadeiro se topo for -1.
 int pilhaVazia(Pilha *pilha)
 {
     return pilha->topo == -1;
 }
 
-// Empilha uma nova posição e o movimento correspondente, se a pilha não estiver cheia.
 void empilhar(Pilha *pilha, Posicao pos, char movimento)
 {
     if (pilha->topo < pilha->tamanho_maximo - 1)
@@ -109,8 +101,6 @@ void empilhar(Pilha *pilha, Posicao pos, char movimento)
     }
 }
 
-// Remove a posição no topo da pilha e a retorna.
-// Se a pilha estiver vazia, a função exibe uma mensagem de erro.
 Posicao desempilhar(Pilha *pilha)
 {
     if (pilhaVazia(pilha))
@@ -121,7 +111,6 @@ Posicao desempilhar(Pilha *pilha)
     return pilha->pilha[(pilha->topo)--];
 }
 
-// Imprime todos os movimentos contidos na pilha, do topo até a base.
 void imprimirPilha(Pilha *pilha)
 {
     printf("\n");
@@ -139,45 +128,38 @@ void desalocarPilha(Pilha *pilha)
     free(pilha->movimentos);
 }
 
-// Inicializa uma fila alocando memória para armazenar as posições.
-void inicializarFila(Fila *q, int tamanhoMaximo)
+void inicializarFila(Fila *f, int tamanhoMaximo)
 {
-    q->itens = (Posicao *)malloc(tamanhoMaximo * sizeof(Posicao));
-    q->primeiro = -1;
-    q->ultimo = -1;
-    q->tamanho = tamanhoMaximo;
+    f->itens = (Posicao *)malloc(tamanhoMaximo * sizeof(Posicao));
+    f->primeiro = -1;
+    f->ultimo = -1;
+    f->tamanho = tamanhoMaximo;
 }
 
-// Verifica se a fila está vazia, retornando verdadeiro se front for -1.
-int filaVazia(Fila *q)
+int filaVazia(Fila *f)
 {
-    return q->primeiro == -1;
+    return f->primeiro == -1;
 }
 
-// Adiciona uma nova posição ao final da fila (rear), se a fila não estiver cheia.
-void enfileirar(Fila *q, Posicao valor)
+void enfileirar(Fila *f, Posicao valor)
 {
-
-    if (q->ultimo == q->tamanho - 1)
+    if (f->ultimo == f->tamanho - 1)
         return;
-    if (q->primeiro == -1)
-        q->primeiro = 0;
-    q->ultimo++;
-    q->itens[q->ultimo] = valor;
+    if (f->primeiro == -1)
+        f->primeiro = 0;
+    f->ultimo++;
+    f->itens[f->ultimo] = valor;
 }
 
-// Remove a posição no início da fila (front) e a retorna.
-// Se a fila estiver vazia, a função exibe uma mensagem de erro.
-Posicao desenfileirar(Fila *q)
+Posicao desenfileirar(Fila *f)
 {
-    Posicao item = q->itens[q->primeiro];
-    q->primeiro++;
-    if (q->primeiro > q->ultimo)
-        q->primeiro = q->ultimo = -1;
+    Posicao item = f->itens[f->primeiro];
+    f->primeiro++;
+    if (f->primeiro > f->ultimo)
+        f->primeiro = f->ultimo = -1;
     return item;
 }
 
-// Inicializa a lista de monstros no labirinto, identificando suas posições no mapa.
 void inicializarMonstros(Labirinto *labirinto)
 {
     labirinto->numMonstros = 0;
@@ -195,26 +177,22 @@ void inicializarMonstros(Labirinto *labirinto)
     }
 }
 
-// Resolve o labirinto com monstros, utilizando duas filas:
-// Uma fila (qA) para armazenar as posições de 'A'.
-// Outra fila (qM) para armazenar as posições dos monstros.
-
 int resolverLabirintoComMonstros(Labirinto *labirinto)
 {
     Fila qA, qM;
     inicializarFila(&qA, labirinto->altura * labirinto->largura);
     inicializarFila(&qM, labirinto->altura * labirinto->largura);
 
-    int visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {0}; // Usando 0 para falso
-    int visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {0}; // Usando 0 para falso
+    bool visitadoA[TAMANHO_MAX][TAMANHO_MAX] = {false};
+    bool visitadoM[TAMANHO_MAX][TAMANHO_MAX] = {false};
 
     enfileirar(&qA, labirinto->posicaoInicial);
-    visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = 1;
+    visitadoA[labirinto->posicaoInicial.x][labirinto->posicaoInicial.y] = true;
 
     for (int i = 0; i < labirinto->numMonstros; i++)
     {
         enfileirar(&qM, labirinto->monstros[i].posicao);
-        visitadoM[labirinto->monstros[i].posicao.x][labirinto->monstros[i].posicao.y] = 1;
+        visitadoM[labirinto->monstros[i].posicao.x][labirinto->monstros[i].posicao.y] = true;
     }
 
     int dx[] = {-1, 1, 0, 0};
@@ -222,21 +200,18 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
 
     while (!filaVazia(&qA))
     {
-        // Movimento de 'A'
+
         int tamanhoA = qA.ultimo - qA.primeiro + 1;
         for (int a = 0; a < tamanhoA; a++)
         {
             Posicao currentA = desenfileirar(&qA);
 
-            // Verifica se 'A' chegou à saída
             if (currentA.x == 0 || currentA.x == labirinto->altura - 1 ||
                 currentA.y == 0 || currentA.y == labirinto->largura - 1)
             {
-
-                return 1; // Labirinto resolvido com sucesso
+                return 1; // A escapou
             }
 
-            // Explora vizinhos de 'A'
             for (int i = 0; i < 4; i++)
             {
                 int newX = currentA.x + dx[i];
@@ -247,12 +222,11 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 {
                     Posicao newA = {newX, newY};
                     enfileirar(&qA, newA);
-                    visitadoA[newX][newY] = 1;
+                    visitadoA[newX][newY] = true;
                 }
             }
         }
 
-        // Movimento dos monstros
         int tamanhoM = qM.ultimo - qM.primeiro + 1;
         for (int m = 0; m < tamanhoM; m++)
         {
@@ -264,32 +238,29 @@ int resolverLabirintoComMonstros(Labirinto *labirinto)
                 int newY = currentM.y + dy[i];
 
                 if (newX >= 0 && newX < labirinto->altura && newY >= 0 && newY < labirinto->largura &&
-                    visitadoM[newX][newY] == 0 && labirinto->mapa[newX][newY] != '#')
+                    !visitadoM[newX][newY] && labirinto->mapa[newX][newY] != '#')
                 {
                     Posicao newM = {newX, newY};
                     enfileirar(&qM, newM);
-                    visitadoM[newX][newY] = 1;
+                    visitadoM[newX][newY] = true;
 
-                    // Verifica se o monstro pegou 'A'
                     if (visitadoA[newX][newY])
                     {
-                        return 0; // Labirinto não resolvido
+                        return 0; // Monstro pegou A
                     }
                 }
             }
         }
     }
 
-    return 0; // 'A' não conseguiu escapar
+    return 0; // A não conseguiu escapar
 }
 
-// Inicializa os monstros e chama a função resolverLabirintoComMonstros.
-// Imprime "YES" se 'A' conseguir escapar e "NO" se for pego por um monstro.
 void resolverLabirinto(Labirinto *labirinto)
 {
     inicializarMonstros(labirinto);
-    int resultado = resolverLabirintoComMonstros(labirinto);
-    if (resultado == 1)
+    printf("Buscando o menor caminho...\n");
+    if (resolverLabirintoComMonstros(labirinto))
     {
         printf("YES\n");
     }

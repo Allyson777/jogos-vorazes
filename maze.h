@@ -1,6 +1,6 @@
 #ifndef MAZE_H
 #define MAZE_H
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -92,6 +92,8 @@ typedef struct
         distancia: (Distância da posição inicial até esta posição)
     Objetivo: Representar um item da fila usado durante a busca em largura.
 */
+void desalocarFila(Fila *f);
+
 typedef struct
 {
     int x, y;
@@ -176,7 +178,7 @@ void desalocarPilha(Pilha *pilha);
         tamanhoMaximo: (Tamanho máximo que a fila pode ter)
     Objetivo: Inicializar uma fila com um tamanho máximo definido.
 */
-void inicializarFila(Fila *q, int tamanhoMaximo);
+void inicializarFila(Fila *f, int tamanhoMaximo);
 
 /*
     Nome da função: filaVazia
@@ -185,7 +187,7 @@ void inicializarFila(Fila *q, int tamanhoMaximo);
     Retorno: (Inteiro, retorna 1 se a fila está vazia, 0 caso contrário)
     Objetivo: Verificar se a fila está vazia.
 */
-int filaVazia(Fila *q);
+int filaVazia(Fila *f);
 
 /*
     Nome da função: enfileirar
@@ -194,7 +196,7 @@ int filaVazia(Fila *q);
         valor: (Estrutura Posicao que será adicionada à fila)
     Objetivo: Inserir uma nova posição no final da fila.
 */
-void enfileirar(Fila *q, Posicao valor);
+void enfileirar(Fila *f, Posicao valor);
 
 /*
     Nome da função: desenfileirar
@@ -203,7 +205,7 @@ void enfileirar(Fila *q, Posicao valor);
     Retorno: (Estrutura Posicao que foi removida do início da fila)
     Objetivo: Remover e retornar a primeira posição da fila.
 */
-Posicao desenfileirar(Fila *q);
+Posicao desenfileirar(Fila *f);
 
 /*
     Nome da função: inicializarMonstros
